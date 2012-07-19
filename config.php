@@ -14,8 +14,8 @@
                                      //should be set to false once live.
     date_default_timezone_set("America/Detroit"); //tell php our server's timezone.
     define("DB_DSN", "mysql:host=localhost;dbname=cmsdb"); //tell php where to find our db.
-    define("DB_USERNAME", "fufanux"); //mysql username
-    define("DB_PASSWORD", "boober"); //mysql password
+    define("DB_USERNAME", "username"); //mysql username
+    define("DB_PASSWORD", "password"); //mysql password
     define("CLASS_PATH", "classes"); //path to class files
     define("TEMPLATE_PATH", "templates"); //tell script where to look for html
     define("HOMEPAGE_NUM_ARTICLES", 5); //controls the max number of article headlines to display
