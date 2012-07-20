@@ -1,14 +1,18 @@
 <?php
 
 require("config.php");
-session_start();
-$action = isset($_GET['action']) ? $_GET['action'] : "";
-$username = isset( $_SESSION['username'] ) ? $_SESSION['username'] : "";
+session_start(); //starts a session for the user
+$action = isset($_GET['action']) ? $_GET['action'] : ""; //store $_GET['action'] param in var $action
+$username = isset( $_SESSION['username'] ) ? $_SESSION['username'] : ""; //same for session and username
 
+
+//check the user is logged in
 if ( $action != "login" && $action != "logout" && !$username) {
     login();
     exit;
 }
+
+//decide which action to perform
 
 switch ($action) {
     case 'login':
@@ -32,6 +36,8 @@ switch ($action) {
         
 }
 
+
+//login func to be called when the user needs to log in
 
 function login() {
  
@@ -65,7 +71,7 @@ function login() {
 
 
 
-
+//logout function to be called when the user wants to log out -- removes the username session key and redirects..
 
 function logout() {
     unset($_SESSION['username']);
@@ -77,7 +83,7 @@ function logout() {
 
 
 
-
+//function to be called that lets the user create a new article
 function newArticle() {
     
     $results = array();
@@ -87,10 +93,10 @@ function newArticle() {
     if ( isset($_POST['saveChanges'] ) ) {
         
         //user has posted the edit article form: save the new article
-        $article = new Article;
-        $article->storeFormValues($_POST);
-        $article->insert();
-        header("Location: admin.php?status=changesSaved");
+        $article = new Article; //new article object
+        $article->storeFormValues($_POST); //store form data in formvalues
+        $article->insert(); //insert article into database
+        header("Location: admin.php?status=changesSaved"); //redirects
         
     } elseif (isset($_POST['cancel'] ) ) {
         
@@ -98,8 +104,9 @@ function newArticle() {
         header("Location:admin.php");
         
     } else {
-        //user has not posted an article edit form yet: display the form
-        $results['article'] = new Article;
+        //user has not poasted new article form yet, create a new empty article object
+        $results['article'] = new Article; 
+        //use editArticle.php to display the article edit
         require (TEMPLATE_PATH . "/admin/editArticle.php");
         
     }
@@ -130,6 +137,10 @@ function editArticle() {
         
     } else {
         
+        //User has not posted the article form yet: display the form.
+        $results['article'] = Article::getByID( (int)$_GET['articleId'] );
+        require( TEMPLAGE_PATH . "/admin/editArticle.php");
+        
     }
     
 }
@@ -139,11 +150,34 @@ function editArticle() {
 
 function deleteArticle() {
     
+    if ( !$article = Article::getById( (int)$_GET['articleId'] ) ) {
+        header("Location: amdin.php?error=articleNotFound");
+        return;
+    }
+    
+    $article->delete();
+    header("Location: admin.php?status=articleDeleted");    
 }
 
 
+
 function listArticles() {
+    $results = array();
+    $data = Article::getList();
+    $results['articles'] = $data['results'];
+    $results['totalRows'] = $data['totalRows'];
+    $results['pageTitle'] = "All Articles";
     
+    if ( isset($_GET['error'] ) ) {
+        if ($_GET['error'] == "articleNotFound" ) $results['errorMessage'] = "Error: Article not found.";   
+    }
+    
+    if ( isset($_GET['status'] ) ) {
+        if ( $_GET['status'] == "changesSaved") $results['statusMessage'] = "Your changes have been saved.";
+        if ( $_GET['status'] == "articleDeleted") $results['statusMessage'] = "Article deleted.";
+    }
+    
+    require( TEMPLATE_PATH . "/admin/listArticles.php");
 }
 
 ?>
