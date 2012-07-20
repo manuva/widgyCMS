@@ -117,7 +117,7 @@ function editArticle() {
     
     $results = array();
     $results['pageTitle'] = "Edit Article";
-    $resuts['formAction'] = "editArticle";
+    $results['formAction'] = "editArticle";
     
     if ( isset($_POST['saveChanges'] ) ) {
         
