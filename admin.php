@@ -112,7 +112,7 @@ function newArticle() {
     }
 }
 
-
+//func to let user edit an existing article
 function editArticle() {
     
     $results = array();
@@ -122,6 +122,7 @@ function editArticle() {
     if ( isset($_POST['saveChanges'] ) ) {
         
         //User has posted the article edit form: save the article changes
+            //when user saves changes, retreive existing article and store
         if ( !$article = Article::getByID( (int)$_POST['articleId'] ) ) {
             header("Location: admin.php?error=articleNotFound");
             return;
@@ -160,10 +161,10 @@ function deleteArticle() {
 }
 
 
-
+//displays list of all articles for editing.  
 function listArticles() {
     $results = array();
-    $data = Article::getList();
+    $data = Article::getList(); //use getList method to retrieve
     $results['articles'] = $data['results'];
     $results['totalRows'] = $data['totalRows'];
     $results['pageTitle'] = "All Articles";
